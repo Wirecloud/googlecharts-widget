@@ -66,6 +66,7 @@
             // redibujar, porque el google.setOnLoadCallback se ejecuta siempre
             // despues de la carga de window. TODO: Hay que probar cuando se cambia una
             // gráfica por otra
+            redraw();
         } else {
             // Update
             // TODO new Options
@@ -153,7 +154,7 @@
         // Initial Data
         process_input(JSON.stringify(testData));
         // Random Data
-        setInterval(testFunc, 5000);
+        //setInterval(testFunc, 5000);
     };
 
     // Only 4 Tests with ComboChart
