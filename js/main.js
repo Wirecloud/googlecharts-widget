@@ -45,7 +45,9 @@
             console.log('Google Chart Error. "type" is needed');
             return;
         }
-        if (currentType == null || currentType != info.type) {
+        //if (currentType == null || currentType != info.type) {
+            // TODO compare options
+        if (true) {
             //New graph
             currentType = info.type;
             if (!('options' in  info)) {
@@ -66,12 +68,12 @@
             // redibujar, porque el google.setOnLoadCallback se ejecuta siempre
             // despues de la carga de window. TODO: Hay que probar cuando se cambia una
             // gráfica por otra
-            redraw();
+            draw_graph();
         } else {
             // Update
             // TODO new Options
             // Normal case
-            data = info.data
+            data = info.data;
             console.log('Google Chart Update. Data: ' + data);
             redraw();
         }
@@ -90,19 +92,35 @@
         // 'false' means that the first row contains labels, not data.
         // 'true' Treat first row as data as well.
         //graph.draw(google.visualization.arrayToDataTable(data, false), currentOptions);
-        graph.draw(google.visualization.arrayToDataTable(data), currentOptions);
+        if (data.length > 1) {
+            graph.draw(google.visualization.arrayToDataTable(data), currentOptions);
+        } else {
+            clean_graph();
+        }
     };
 
     var delete_graph = function delete_graph() {
         // Clears the chart, and releases all of its allocated resources.
         currentType = null;
-        currentOptions = null
+        currentOptions = null;
         graph.clearChart();
         //TODO ¿Habrá que hacer algo más para quitarlo del DOM?
     };
 
     var clean_graph = function clean_graph() {
-        graph.clearChart();
+        // Dummy Graph
+        var cleandata = google.visualization.arrayToDataTable([
+            ['Time', 'dummy'],
+            ['', 0],
+        ]);
+
+        var cleanoptions = {
+            title:"----",
+            width:'100%', height:'100%',
+            hAxis: {title: "---"},
+            legend : {position: '---'}
+        };
+        graph.draw(cleandata,cleanoptions);
     };
 
     MashupPlatform.widget.context.registerCallback(function (new_values) {
@@ -152,9 +170,11 @@
             ]
         };
         // Initial Data
-        process_input(JSON.stringify(testData));
+        //process_input(JSON.stringify(testData));
         // Random Data
         //setInterval(testFunc, 5000);
+        // Dafault Type
+        currentType = 'LineChart';
     };
 
     // Only 4 Tests with ComboChart
@@ -166,7 +186,7 @@
             ['2006/07',  Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 900) + 100],
             ['2007/08',  Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 900) + 100],
             ['2008/09',  Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 900) + 100]
-        ]
+        ];
         process_input(JSON.stringify({'type': "ComboChart",'data': newData}));
     };
 
@@ -175,7 +195,7 @@
 
     //https://developers.google.com/loader/
     //https://developers.google.com/chart/
-    // TODO: ponga lo que ponga en packages, excepto paquetes que no existan (LineChart 
+    // TODO: ponga lo que ponga en packages, excepto paquetes que no existan (LineChart
     // funciona y no debería... debería usar corechart :S), hacen que se vea cualquier gráfica
     google.load("visualization", "1", {packages:["corechart", "gauge", "geochart", "imagechart", "motionchart", "orgchart", "table", "treemap"]});
     // Google always load after DOM (or so it seems)
