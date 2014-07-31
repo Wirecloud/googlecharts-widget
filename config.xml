@@ -4,7 +4,7 @@
     <Catalog.ResourceDescription>
         <Vendor>COM</Vendor>
         <Name>googleChart</Name>
-        <Version>0.2.15</Version>
+        <Version>0.2.18</Version>
         <DisplayName>Google Chart</DisplayName>
         <Author>Carlos Blanco</Author>
         <License>Apache License 2.0</License>

@@ -108,22 +108,21 @@
     };
 
     var clean_graph = function clean_graph() {
-        // Dummy Graph
-        var cleandata = google.visualization.arrayToDataTable([
+        data = [
             ['Time', 'dummy'],
             ['', 0],
-        ]);
+        ];
 
-        var cleanoptions = {
-            title:"----",
+        currentOptions = {
+            title:"No Data",
             width:'100%', height:'100%',
-            hAxis: {title: "---"},
-            legend : {position: '---'}
+            hAxis: {title: "none"},
+            legend : {position: 'none'}
         };
-        graph.draw(cleandata,cleanoptions);
+        redraw();
     };
 
-    MashupPlatform.widget.context.registerCallback(function (new_values) {
+    var resizeHandler = function resizeHandler(new_values) {
         var hasChanged;
 
         if ('heightInPixels' in new_values) {
@@ -136,7 +135,7 @@
             hasChanged = true;
         }
         redraw();
-    });
+    };
 
     window.addEventListener('load', function () {
         graphContainer = document.getElementById('graphContainer');
@@ -145,6 +144,7 @@
         graphContainer.style.width = "100%";
         init();
     }, true);
+    window.addEventListener("resize", resizeHandler, true);
 
     var init = function init() {
 
@@ -186,7 +186,7 @@
             ['2006/07',  Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 900) + 100],
             ['2007/08',  Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 900) + 100],
             ['2008/09',  Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 1000) + 1, Math.floor(Math.random() * 900) + 100]
-        ];
+        ]
         process_input(JSON.stringify({'type': "ComboChart",'data': newData}));
     };
 
