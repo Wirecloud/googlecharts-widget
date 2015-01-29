@@ -1,33 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Template xmlns="http://wirecloud.conwet.fi.upm.es/ns/template#">
-
-    <Catalog.ResourceDescription>
-        <Vendor>COM</Vendor>
-        <Name>googleChart</Name>
-        <Version>0.2.18</Version>
-        <DisplayName>Google Chart</DisplayName>
-        <Author>Carlos Blanco</Author>
-        <License>Apache License 2.0</License>
-        <LicenseURL>http://www.apache.org/licenses/LICENSE-2.0.html</LicenseURL>
-        <Mail>cblanco@conwet.com</Mail>
-        <Description>This widget allows you to create any graph supported by Google Chart. See https://developers.google.com/chart/interactive/docs/gallery for more info about what kind of graphics you can obtain using this widget.</Description>
-        <ImageURI>images/catalogue.png</ImageURI>
-        <WikiURI>doc/index.html</WikiURI>
-    </Catalog.ResourceDescription>
-
-    <Platform.Wiring>
-        <InputEndpoint name="input"
-                type="text"
-                label="Data in"
-                description="Data Input. See the documentation for more information"
-                friendcode="graphData"/>
-    </Platform.Wiring>
-
-    <Platform.Link>
-        <XHTML href="index.html" use-platform-style="true"/>
-
-    </Platform.Link>
-
-    <Platform.Rendering width="11" height="36"/>
-
-</Template>
+<?xml version='1.0' encoding='UTF-8'?>
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="COM" name="googleChart" version="0.2.18">
+  <details>
+    <title>Google Chart</title>
+    <email>cblanco@conwet.com</email>
+    <image>images/catalogue.png</image>
+    <description>This widget allows you to create any graph supported by Google Chart. See https://developers.google.com/chart/interactive/docs/gallery for more info about what kind of graphics you can obtain using this widget.</description>
+    <doc>doc/index.html</doc>
+    <license>Apache License 2.0</license>
+    <licenseurl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseurl>
+    <authors>Carlos Blanco</authors>
+  </details>
+  <wiring>
+    <inputendpoint name="input" type="text" label="Data in" description="Data Input. See the documentation for more information" friendcode="graphData"/>
+  </wiring>
+  <contents src="index.html" useplatformstyle="true"/>
+  <rendering height="36" width="11"/>
+</widget>
