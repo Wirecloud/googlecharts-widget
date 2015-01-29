@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="COM" name="googleChart" version="0.2.18">
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="COM" name="googleChart" version="1.0.0">
   <details>
     <title>Google Chart</title>
     <email>cblanco@conwet.com</email>
