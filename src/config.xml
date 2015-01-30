@@ -1,13 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="COM" name="googleChart" version="1.0.0">
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="CoNWeT" name="googlecharts" version="1.0.0">
   <details>
-    <title>Google Chart</title>
+    <title>Google Charts</title>
     <email>cblanco@conwet.com</email>
     <image>images/catalogue.png</image>
-    <description>This widget allows you to create any graph supported by Google Chart. See https://developers.google.com/chart/interactive/docs/gallery for more info about what kind of graphics you can obtain using this widget.</description>
+    <homepage>https://github.com/Wirecloud/googlecharts-widget</homepage>
+    <description>This widget allows you to create any graph supported by Google Charts</description>
+    <longdescription>DESCRIPTION.md</longdescription>
     <doc>doc/index.html</doc>
     <license>Apache License 2.0</license>
     <licenseurl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseurl>
+    <changelog>doc/changelog.md</changelog>
     <authors>Carlos Blanco</authors>
   </details>
   <wiring>

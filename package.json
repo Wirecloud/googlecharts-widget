@@ -5,14 +5,10 @@
   "description": "A web widget that allows join a one-2-one video call, supported by Kurento Media Server.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wirecloud-fiware/widget-one2one-call.git"
+    "url": "https://github.com/Wirecloud/googlecharts-widget.git"
   },
   "keywords": [
-    "one-2-one",
-    "video-call",
-    "webcam",
-    "kurento",
-    "webrtc",
+    "charts",
     "wirecloud"
   ],
   "author": "CoNWeT Lab., Universidad Politecnica de Madrid",
