@@ -14,7 +14,7 @@
     <authors>Carlos Blanco</authors>
   </details>
   <wiring>
-    <inputendpoint name="input" type="text" label="Data in" description="Data Input. See the documentation for more information" friendcode="graphData"/>
+    <inputendpoint name="input" type="text" label="Data in" description="Data Input. See the documentation for more information" friendcode="googlecharts-graph-data"/>
   </wiring>
   <contents src="index.html" useplatformstyle="true"/>
   <rendering height="36" width="11"/>
