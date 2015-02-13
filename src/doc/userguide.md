@@ -8,8 +8,20 @@ For more information about Google Charts and what kind of graphics you can obtai
 
 Input Endpoints:
 
-- **Data in**: Endpoint providing data to be consumed by the Google Charts
-  library. See [the Chart Gallery](https://developers.google.com/chart/interactive/docs/gallery) for a complete set of examples.
+-   **Data in**: Input endpoint for sending the data and the options for building
+    the chart using the Google Charts library. Data coming from this endpoint
+    should be structured using json with the following attributes:
+
+    -   **type** (String): Name of the visualization's class to use.
+    -   **options** (Object): A map of name/value pairs of custom options.
+        Examples include height and width, background colors, and captions. The
+        visualization documentation should list which options are available, and
+        should support default options if you do not specify this parameter.
+    -   **data**: A two-dimensional array, where each row represents a row in
+        the data table. The first row will be interpreted as header labels. The
+        data types of each column are interpreted automatically from the data
+        given. If a cell has no value, specify a `null` or empty value as
+        appropriate.
 
 Output Endpoints:
 
@@ -26,7 +38,7 @@ Output Endpoints:
                 "width": "100%",
                 "height": "100%"
             },
-            "data":[
+            "data": [
                 ["Country", "Popularity"],
                 ["Germany", 200],
                 ["United States", 300],
