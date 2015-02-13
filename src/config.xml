@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="CoNWeT" name="googlecharts" version="1.0.0">
+<widget xmlns="http://wirecloud.conwet.fi.upm.es/ns/macdescription/1" vendor="CoNWeT" name="googlecharts" version="1.0.1">
   <details>
     <title>Google Charts</title>
-    <email>cblanco@conwet.com</email>
+    <email>wirecloud@conwet.com</email>
     <image>images/catalogue.png</image>
     <homepage>https://github.com/Wirecloud/googlecharts-widget</homepage>
     <description>This widget allows you to create any graph supported by Google Charts</description>
@@ -11,7 +11,7 @@
     <license>Apache License 2.0</license>
     <licenseurl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseurl>
     <changelog>doc/changelog.md</changelog>
-    <authors>Carlos Blanco</authors>
+    <authors>Carlos Blanco &lt;cblanco@conwet.com&gt; Álvaro Arranz &lt;aarranz@conwet.com&gt;</authors>
   </details>
   <wiring>
     <inputendpoint name="input" type="text" label="Data in" description="Data Input. See the documentation for more information" friendcode="googlecharts-graph-data"/>

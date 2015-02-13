@@ -1,8 +1,8 @@
 {
   "vendor": "CoNWeT",
   "name": "googlecharts",
-  "version": "1.0.0",
-  "description": "A web widget that allows join a one-2-one video call, supported by Kurento Media Server.",
+  "version": "1.0.1",
+  "description": "Wirecloud widget allowing you to create any graph supported by Google Charts",
   "repository": {
     "type": "git",
     "url": "https://github.com/Wirecloud/googlecharts-widget.git"
@@ -12,11 +12,11 @@
     "wirecloud"
   ],
   "author": "CoNWeT Lab., Universidad Politecnica de Madrid",
-  "license": "https://github.com/wirecloud-fiware/widget-one2one-call/blob/master/LICENSE",
+  "license": "https://github.com/Wirecloud/googlecharts-widget/blob/master/LICENSE",
   "bugs": {
-    "url": "https://github.com/wirecloud-fiware/widget-one2one-call/issues"
+    "url": "https://github.com/Wirecloud/googlecharts-widget/issues"
   },
-  "homepage": "https://github.com/wirecloud-fiware/widget-one2one-call",
+  "homepage": "https://github.com/Wirecloud/googlecharts-widget",
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-clean": "^0.6.0",
