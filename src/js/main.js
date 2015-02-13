@@ -93,8 +93,8 @@
         ];
 
         currentOptions = {
-            title:"No Data",
-            width:'100%', height:'100%',
+            title: "No Data",
+            width: '100%', height: '100%',
             hAxis: {title: "none"},
             legend: {position: 'none'}
         };
@@ -131,7 +131,7 @@
     //https://developers.google.com/chart/
     // TODO: ponga lo que ponga en packages, excepto paquetes que no existan (LineChart
     // funciona y no debería... debería usar corechart :S), hacen que se vea cualquier gráfica
-    google.load("visualization", "1", {packages:["corechart", "gauge", "geochart", "imagechart", "motionchart", "orgchart", "table", "treemap"]});
+    google.load("visualization", "1", {packages: ["corechart", "gauge", "geochart", "imagechart", "motionchart", "orgchart", "table", "treemap"]});
     // Google always load after DOM (or so it seems)
     google.setOnLoadCallback(draw_graph);
 
