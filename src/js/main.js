@@ -18,28 +18,8 @@
     var currentOptions;
 
     var process_input = function process_input(input) {
-        var info;
 
-        /*
-        inputExample = {
-            'type': "GeoChart",
-            'options': {
-                width: 556,
-                height: 347
-            },
-            'data':[
-                ['Country', 'Popularity'],
-                ['Germany', 200],
-                ['United States', 300],
-                ['Brazil', 400],
-                ['Canada', 500],
-                ['France', 600],
-                ['RU', 700]
-            ]
-        };
-        */
-
-        info = JSON.parse(input);
+        var info = JSON.parse(input);
         if (!('type' in info)) {
             // Error. Type is needed
             MashupPlatform.widget.log('Google Chart Error. "type" is needed');

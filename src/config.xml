@@ -7,7 +7,7 @@
     <homepage>https://github.com/Wirecloud/googlecharts-widget</homepage>
     <description>This widget allows you to create any graph supported by Google Charts</description>
     <longdescription>DESCRIPTION.md</longdescription>
-    <doc>doc/index.html</doc>
+    <doc>doc/userguide.md</doc>
     <license>Apache License 2.0</license>
     <licenseurl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseurl>
     <changelog>doc/changelog.md</changelog>
