@@ -4,9 +4,9 @@
     <title>Google Charts</title>
     <email>wirecloud@conwet.com</email>
     <image>images/catalogue.png</image>
-    <homepage>https://github.com/Wirecloud/googlecharts-widget</homepage>
     <description>This widget allows you to create any graph supported by Google Charts</description>
     <longdescription>DESCRIPTION.md</longdescription>
+    <homepage>https://github.com/Wirecloud/googlecharts-widget</homepage>
     <doc>doc/index.md</doc>
     <license>Apache License 2.0</license>
     <licenseurl>http://www.apache.org/licenses/LICENSE-2.0.html</licenseurl>
