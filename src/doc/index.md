@@ -1,35 +1,33 @@
-## Introduction
+Google Charts Widget
+====================
 
 This widget allows you to create any graph/chart/table supported by the [Google Charts library](https://developers.google.com/chart/).
 
 For more information about Google Charts and what kind of graphics you can obtain using this widget, see [Chart Gallery page](https://developers.google.com/chart/interactive/docs/gallery) provided by Google.
 
-## Wiring
+## Configurations
 
-Input Endpoints:
+### Preferences
 
--   **Data in**: Input endpoint for sending the data and the options for building
-    the chart using the Google Charts library. Data coming from this endpoint
-    should be structured using json with the following attributes:
+This widget has not preferences.
 
-    -   **type** (String): Name of the visualization's class to use.
-    -   **options** (Object): A map of name/value pairs of custom options.
-        Examples include height and width, background colors, and captions. The
-        visualization documentation should list which options are available, and
-        should support default options if you do not specify this parameter.
-    -   **data**: A two-dimensional array, where each row represents a row in
-        the data table. The first row will be interpreted as header labels. The
-        data types of each column are interpreted automatically from the data
-        given. If a cell has no value, specify a `null` or empty value as
-        appropriate.
+### Wiring
 
-Output Endpoints:
+#### Input Endpoints:
 
-* This widget has no output endpoint
+* **Data in**: Input endpoint for sending the data and the options for building the chart using the Google Charts library. Data coming from this endpoint should be structured using json with the following attributes:
 
-### Examples
+    * `type (String)`: Name of the visualization's class to use.
+    * `options (Object)`: A map of name/value pairs of custom options. Examples include height and width, background colors, and captions. The visualization documentation should list which options are available, and should support default options if you do not specify this parameter.
+    * `data`: A two-dimensional array, where each row represents a row in the data table. The first row will be interpreted as header labels. The data types of each column are interpreted automatically from the data given. If a cell has no value, specify a `null` or empty value as appropriate.
 
--   Map showing population data:
+#### Output Endpoints:
+
+* This widget has no output endpoint.
+
+## Examples
+
+* Map showing population data:
 
         :::json
         {
@@ -49,7 +47,7 @@ Output Endpoints:
             ]
         }
 
--   Chart mixing bars and lines:
+* Chart mixing bars and lines:
 
         :::json
         {
