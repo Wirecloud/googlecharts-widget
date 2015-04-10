@@ -21,120 +21,147 @@ window.Widget = (function () {
 
     "use strict";
 
+    /**
+     * Create a new instance of class Widget.
+     * @class
+     */
     var Widget = function Widget() {
-        this.data = [];
-        this.graphContainer = null;
+        this.wrapperElement = null;
         this.graph = null;
-        this.currentType = 'LineChart';
-        this.currentOptions = null;
+        this.type = Widget.DEFAULTS.TYPE;
 
-        MashupPlatform.widget.context.registerCallback(this.resizeHandler.bind(this));
-
-        // Input handler
-        MashupPlatform.wiring.registerCallback('input', this.process_input.bind(this));
+        MashupPlatform.widget.context.registerCallback(handler_onresize.bind(this));
+        MashupPlatform.wiring.registerCallback('input', handler_onreceiveGraphInfo.bind(this));
     };
 
-    Widget.prototype.process_input = function process_input(input) {
+    /* ==================================================================================
+     *  STATIC MEMBERS
+     * ================================================================================== */
 
-        var info = JSON.parse(input);
-        if (!('type' in info)) {
-            // Error. Type is needed
-            MashupPlatform.widget.log('Google Chart Error. "type" is needed');
-            return;
-        } else {
-            this.currentType = info.type;
-            if (!('options' in  info)) {
-                // Error. Type is needed
-                MashupPlatform.widget.log('Google Chart Error. "options" is needed');
-                return;
-            }
-            // Set graph options
-            this.currentOptions = info.options;
-            if (!('data' in  info)) {
-                // Empty graph
-                MashupPlatform.widget.log('Google Chart warning. "data" is empty');
-                this.data = [];
-            } else {
-                this.data = info.data;
-            }
-            // Nota: En el caso de la carga de la gráfica inicial, No se necesita
-            // redibujar, porque el google.setOnLoadCallback se ejecuta siempre
-            // despues de la carga de window. TODO: Hay que probar cuando se cambia una
-            // gráfica por otra
-            this.draw_graph();
-        }
+    Widget.DEFAULTS = {
 
-        // Update
-        // TODO new Options
-        // Normal case
-        this.data = info.data;
-        MashupPlatform.widget.log('Google Chart Update. Data: ' + this.data);
-        this.redraw();
-    };
+        MIN_LENGTH: 2,
 
-    Widget.prototype.redraw = function redraw() {
-        this.graph.draw(google.visualization.arrayToDataTable(this.data), this.currentOptions);
-    };
+        TYPE: 'LineChart',
 
-    Widget.prototype.draw_graph = function draw_graph() {
-        this.graph = new google.visualization[this.currentType](this.graphContainer);
-        // TODO data formats. Se podría añadir a la estructura de datos de entrada un flag
-        // que indique el valor del campo que determina si el primer campo es label o dato.
-        // 'false' means that the first row contains labels, not data.
-        // 'true' Treat first row as data as well.
-        //graph.draw(google.visualization.arrayToDataTable(data, false), currentOptions);
-        if (this.data.length > 1) {
-            this.graph.draw(google.visualization.arrayToDataTable(this.data), this.currentOptions);
-        } else {
-            this.clean_graph();
-        }
-    };
-
-    Widget.prototype.clean_graph = function clean_graph() {
-        this.data = [
+        DATA: [
             ['Time', 'dummy'],
             ['', 0],
-        ];
+        ],
 
-        this.currentOptions = {
+        OPTIONS: {
             title: "No Data",
-            width: '100%', height: '100%',
-            hAxis: {title: "none"},
-            legend: {position: 'none'}
-        };
-        this.redraw();
-    };
-
-    Widget.prototype.resizeHandler = function resizeHandler(new_values) {
-        var hasChanged;
-
-        if ('heightInPixels' in new_values) {
-            this.graphContainer.style.height = (document.body.getBoundingClientRect().height - 16) + "px";
-            hasChanged = true;
+            width: '100%',
+            height: '100%',
+            hAxis: {
+                title: "none"
+            },
+            legend: {
+                position: 'none'
+            }
         }
 
-        if ('widthInPixels' in new_values) {
-            this.graphContainer.style.width = (document.body.getBoundingClientRect().width - 10) + "px";
-            hasChanged = true;
-        }
-        this.redraw();
     };
+
+    /* ==================================================================================
+     *  PUBLIC METHODS
+     * ================================================================================== */
 
     Widget.prototype.init = function init() {
-        this.graphContainer = document.getElementById('graphContainer');
-        // Resize the linearGraphContainer
-        this.graphContainer.style.height = "100%";
-        this.graphContainer.style.width = "100%";
+        var packages;
 
-        //https://developers.google.com/loader/
-        //https://developers.google.com/chart/
-        // TODO: ponga lo que ponga en packages, excepto paquetes que no existan (LineChart
-        // funciona y no debería... debería usar corechart :S), hacen que se vea cualquier gráfica
-        // Load the Visualization API and the chart packages
-        google.load("visualization", "1", {packages: ["corechart", "gauge", "geochart", "imagechart", "motionchart", "orgchart", "table", "treemap"]});
-        // Google always load after DOM (or so it seems)
-        // Set a callback to run when the Google Visualization API is loaded
-        google.setOnLoadCallback(this.draw_graph.bind(this));
+        this.wrapperElement = document.getElementById('graphContainer');
+
+        //For more info, show all packages supported: https://developers.google.com/chart/
+        packages = [
+            "corechart",
+            "gauge",
+            "geochart",
+            "imagechart",
+            "motionchart",
+            "orgchart",
+            "table",
+            "treemap"
+        ];
+
+        //For more info, show the Google Loader Developer's Guide: https://developers.google.com/loader/
+        google.load('visualization', '1', {packages: packages});
+        google.setOnLoadCallback(handler_onload.bind(this));
+    };
+
+    Widget.prototype.createGraph = function createGraph() {
+        this.graph = new google.visualization[this.type](this.wrapperElement);
+
+        return this;
+    };
+
+    Widget.prototype.resetGraph = function resetGraph() {
+        this.data = Widget.DEFAULTS.DATA;
+        this.options = Widget.DEFAULTS.OPTIONS;
+
+        return this.repaintGraph();
+    };
+
+    Widget.prototype.repaintGraph = function repaintGraph() {
+        this.graph.draw(google.visualization.arrayToDataTable(this.data), this.options);
+
+        return this;
+    };
+
+    /* ==================================================================================
+     *  PRIVATE METHODS
+     * ================================================================================== */
+
+    var handler_onreceiveGraphInfo = function handler_onreceiveGraphInfo(graphInfoString) {
+        var graphInfo = JSON.parse(graphInfoString);
+
+        // if the graph type is empty or is not supported...
+        if (!graphInfo.type) {
+            // ...throw a new error message.
+            MashupPlatform.widget.log("Google Chart Error. The field 'type' is required.");
+            return;
+        }
+
+        // if the first time or the graph type will be changed (add)...
+        if (!this.graph || this.type != graphInfo.type) {
+            if (!graphInfo.options) {
+                MashupPlatform.widget.log("Google Chart Error. The field 'options' is required.");
+                return;
+            }
+
+            // ...create a new instance of Visualization Google Graph.
+            this.type = graphInfo.type;
+            this.options = graphInfo.options;
+            this.createGraph();
+        }
+
+        // if the graph data is empty (empty)...
+        if (!graphInfo.data || graphInfo.data.length < Widget.DEFAULTS.MIN_LENGTH) {
+            // ...clean the current graph.
+            this.resetGraph();
+            MashupPlatform.widget.log("Google Chart Operation. The graph was emptied.");
+        } else {
+            // otherwise, the graph will be painted with the current data.
+            this.data = graphInfo.data;
+            this.repaintGraph();
+            MashupPlatform.widget.log("Google Chart Operation. The graph was updated or created.");
+        }
+    };
+
+    var handler_onresize = function handler_onresize(container) {
+        if ('heightInPixels' in container) {
+            this.wrapperElement.style.height = (document.body.getBoundingClientRect().height - 16) + "px";
+        }
+
+        if ('widthInPixels' in container) {
+            this.wrapperElement.style.width = (document.body.getBoundingClientRect().width - 10) + "px";
+        }
+
+        this.repaintGraph();
+    };
+
+    var handler_onload = function handler_onload() {
+        this.createGraph().resetGraph();
     };
 
     return Widget;
