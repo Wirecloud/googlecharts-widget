@@ -1,7 +1,7 @@
 Google Charts Widget
 ====================
 
-This widget allows you to create any graph/chart/table supported by the [Google Charts library](https://developers.google.com/chart/).
+This widget allows you to create any graph/charts supported by the [Google Charts library](https://developers.google.com/chart/).
 
 For more information about Google Charts and what kind of graphics you can obtain using this widget, see [Chart Gallery page](https://developers.google.com/chart/interactive/docs/gallery) provided by Google.
 
