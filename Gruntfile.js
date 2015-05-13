@@ -112,9 +112,17 @@ module.exports = function (grunt) {
         },
 
         jscs: {
-            src: 'src/js/**/*',
-            options: {
-                config: ".jscsrc"
+            widget: {
+                src: 'src/js/**/*',
+                options: {
+                    config: ".jscsrc"
+                }
+            },
+            grunt: {
+                src: 'Gruntfile.js',
+                options: {
+                    config: ".jscsrc"
+                }
             }
         },
 
