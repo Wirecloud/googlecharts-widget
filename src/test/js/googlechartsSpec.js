@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-/*global $, google*/
-
+/*global $, google, MockMP, MashupPlatform*/
 
 (function () {
 
     "use strict";
 
     jasmine.getFixtures().fixturesPath = 'src/test/fixtures/';
+
+    window.MashupPlatform = new MockMP.MockMP();
 
     var dependencyList = [
         'script',
@@ -33,26 +34,15 @@
         $('body > *:not(' + dependencyList.join(', ') + ')').remove();
     };
 
-    var getWiringCallback = function getWiringCallback(endpoint) {
-        var calls = MashupPlatform.wiring.registerCallback.calls;
-        var count = calls.count();
-        for (var i = count - 1; i >= 0; i--) {
-            var args = calls.argsFor(i);
-            if (args[0] === endpoint) {
-                return args[1];
-            }
-        }
-        return null;
-    };
-
     describe("Google Charts widget", function () {
 
         var widget = null;
 
         beforeEach(function () {
             loadFixtures('index.html');
-            MashupPlatform.widget.context.registerCallback.calls.reset();
-            MashupPlatform.wiring.registerCallback.calls.reset();
+            MashupPlatform.reset();
+            // MashupPlatform.widget.context.registerCallback.calls.reset();
+            // MashupPlatform.wiring.registerCallback.calls.reset();
 
             google.load.calls.reset();
             google.setOnLoadCallback.calls.reset();
@@ -87,69 +77,134 @@
         });
 
         it("throws error message when it's trying to perform any operation with no 'type'", function () {
-            var callback = getWiringCallback('input');
-            callback('{"options":{"width":"100%","height":"100%"},"data":[["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]}');
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Error. The field 'type' is required.");
+            MashupPlatform.simulateReceiveEvent('input', {
+                options: {
+                    width: "100%",
+                    height: "100%"
+                },
+                data: [["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]
+            });
+
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith("Google Chart Error. The field 'type' is required.");
         });
 
         it("throws error message when it's trying to perform any operation with a 'type' not supported", function () {
-            var callback = getWiringCallback('input');
-            callback('{"type":"","options":{"width":"100%","height":"100%"},"data":[["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]}');
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Error. The field 'type' is required.");
+            MashupPlatform.simulateReceiveEvent('input', {
+                type:"",
+                options:{
+                    width:"100%",
+                    height:"100%"
+                },
+                data:[["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]
+            });
+
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith("Google Chart Error. The field 'type' is required.");
         });
 
         it("throws error message when it's trying to switch the graph with no 'options'", function () {
-            var callback = getWiringCallback('input');
-            callback('{"type":"GeoChart","data":[["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]}');
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Error. The field 'options' is required.");
+            MashupPlatform.simulateReceiveEvent('input', {
+                type:"GeoChart",
+                data:[["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]
+            });
+
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith("Google Chart Error. The field 'options' is required.");
         });
 
         it("handles the data received from the 'input' endpoint to switch the graph", function () {
-            var callback = getWiringCallback('input');
-            callback('{"type":"ComboChart","options":{"title":"Monthly Coffee Production by Country","width":"100%","height":"100%","vAxis":{"title":"Cups"},"hAxis":{"title":"Month"},"seriesType":"bars","series":{"5":{"type":"line"}}},"data":[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]}');
+            MashupPlatform.simulateReceiveEvent('input', {
+                type:"ComboChart",
+                options:{
+                    title:"Monthly Coffee Production by Country",
+                    width:"100%",
+                    height:"100%",
+                    vAxis:{
+                        title:"Cups"
+                    },
+                    hAxis: {
+                        title:"Month"
+                    },
+                    seriesType:"bars",
+                    series:{
+                        5:{
+                            type:"line"
+                        }
+                    }
+                },
+                data:[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]});
+
             expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was updated or created.");
         });
 
         it("handles the data received (with no data) from the 'input' endpoint to switch and empty the graph", function () {
-            var callback = getWiringCallback('input');
-            callback('{"type":"GeoChart","options":{"width":"100%","height":"100%"}}');
+            MashupPlatform.simulateReceiveEvent('input', {
+                type:"GeoChart",
+                options:{
+                    width:"100%",
+                    height:"100%"
+                }
+            });
+
             expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was emptied.");
         });
 
         it("handles the data received (with unique data) from the 'input' endpoint to switch and empty the graph", function () {
-            var callback = getWiringCallback('input');
-            callback('{"type":"GeoChart","data":[["Country","Popularity"]]}');
+            MashupPlatform.simulateReceiveEvent('input', {
+                type:"GeoChart",
+                options: {
+                    width: "100%",
+                    height: "100%"
+                },
+                data:[["Country","Popularity"]]
+            });
+
             expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was emptied.");
         });
 
+        it("handles the data received (with unique data) from the 'input' ", function () {
+            MashupPlatform.simulateReceiveEvent('input', {
+                type:"LineChart",
+                data:[["Country","Popularity"]]
+            });
+
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was emptied.");
+        });
+
+
         it("handles the data received from the 'input' endpoint to update the graph", function () {
-            var callback = getWiringCallback('input');
-            callback('{"type":"LineChart","data":[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]}');
+            MashupPlatform.simulateReceiveEvent('input', {
+                type:"LineChart",
+                data:[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]});
+
             expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was updated or created.");
         });
 
         it("handles the data received (with no data) from the 'input' endpoint to keep and empty the graph", function () {
-            var callback = getWiringCallback('input');
-            callback('{"type":"LineChart"}');
+            MashupPlatform.simulateReceiveEvent('input', {
+                type: "LineChart"
+            });
+
             expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was emptied.");
         });
 
         it("handles the data received (with unique data) from the 'input' endpoint to keep and empty the graph", function () {
-            var callback = getWiringCallback('input');
-            callback('{"type":"LineChart","data":[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"]]}');
+            MashupPlatform.simulateReceiveEvent('input', {
+                type:"LineChart",
+                data:[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"]]
+            });
+
             expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was emptied.");
         });
 
         it("repaints the graph container when the vertical is resized", function () {
-            var pref_callback = MashupPlatform.widget.context.registerCallback.calls.argsFor(0)[0];
-            pref_callback({"heightInPixels": 100});
+            MashupPlatform.simulateReceiveContext('heightInPixels', 80);
             expect(widget.repaintGraph).toHaveBeenCalled();
+            expect(widget.getWrapperElement().style.height).toEqual("64px");
         });
 
         it("repaints the graph container when the horizontal is resized", function () {
-            var pref_callback = MashupPlatform.widget.context.registerCallback.calls.argsFor(0)[0];
-            pref_callback({"widthInPixels": 100});
+            MashupPlatform.simulateReceiveContext('widthInPixels', 384);
             expect(widget.repaintGraph).toHaveBeenCalled();
+            expect(widget.getWrapperElement().style.width).toEqual("374px");
         });
 
     });

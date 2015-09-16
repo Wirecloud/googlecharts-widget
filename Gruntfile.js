@@ -160,8 +160,9 @@ module.exports = function (grunt) {
                     specs: 'src/test/js/*Spec.js',
                     helpers: ['src/test/helpers/*.js'],
                     vendor: ['bower_components/jquery/dist/jquery.js',
-                        'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
-                        'src/test/vendor/*.js']
+                             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
+                             'node_modules/mock-applicationmashup/lib/vendor/mockMashupPlatform.js',
+                             'src/test/vendor/*.js']
                 }
             },
 
@@ -179,9 +180,9 @@ module.exports = function (grunt) {
                     templateOptions: {
                         coverage: 'build/coverage/json/coverage.json',
                         report: [
-                        {type: 'html', options: {dir: 'build/coverage/html'}},
-                        {type: 'cobertura', options: {dir: 'build/coverage/xml'}},
-                        {type: 'text-summary'}
+                            {type: 'html', options: {dir: 'build/coverage/html'}},
+                            {type: 'cobertura', options: {dir: 'build/coverage/xml'}},
+                            {type: 'text-summary'}
                         ]
                     }
                 }

@@ -118,14 +118,15 @@ window.Widget = (function () {
         // if the graph type is empty or is not supported...
         if (!graphInfo.type) {
             // ...throw a new error message.
-            MashupPlatform.widget.log("Google Chart Error. The field 'type' is required.");
+            MashupPlatform.wiring.EndpointValueError("Google Chart Error. The field 'type' is required.");
+            // MashupPlatform.widget.log("Google Chart Error. The field 'type' is required.");
             return;
         }
 
         // if the first time or the graph type will be changed (add)...
         if (!this.graph || this.type != graphInfo.type) {
             if (!graphInfo.options) {
-                MashupPlatform.widget.log("Google Chart Error. The field 'options' is required.");
+                MashupPlatform.wiring.EndpointValueError("Google Chart Error. The field 'options' is required.");
                 return;
             }
 
@@ -163,6 +164,22 @@ window.Widget = (function () {
     var handler_onload = function handler_onload() {
         this.createGraph().resetGraph();
     };
+
+    /* test-code */
+
+    var getWrapperElement = function () {
+        return this.wrapperElement;
+    };
+
+    var prototypeappend = {
+        getWrapperElement: getWrapperElement
+    };
+
+    for (var attrname in prototypeappend) {
+        Widget.prototype[attrname] = prototypeappend[attrname];
+    }
+    /* end-test-code */
+
 
     return Widget;
 
