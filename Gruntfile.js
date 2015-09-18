@@ -59,6 +59,7 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: 'src',
                         src: [
+                            'DESCRIPTION.md',
                             'css/**/*',
                             'doc/**/*',
                             'images/**/*',
@@ -217,5 +218,4 @@ module.exports = function (grunt) {
         'replace:version',
         'compress:widget'
     ]);
-
 };

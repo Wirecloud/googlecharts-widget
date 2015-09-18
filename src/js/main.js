@@ -23,5 +23,8 @@
 
     var wgt = new Widget();
     wgt.init();
+    document.addEventListener('DOMContentLoaded', function () {
+        wgt.loadElement();
+    }, false);
 
 })();
