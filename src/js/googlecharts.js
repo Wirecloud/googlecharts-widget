@@ -140,38 +140,38 @@ window.Widget = (function () {
         try {
             graphInfo = JSON.parse(graphInfoString);
         } catch (error) {
-            throw new MashupPlatform.wiring.EndpointTypeError("Data should be encoded as JSON");
+            throw new MashupPlatform.wiring.EndpointTypeError(Messages.EncodeError);
         }
 
         if (graphInfo.action && typeof graphInfo.action === "string") {
             switch (graphInfo.action) {
             case "update":
                 if (!this.graph) {
-                    throw new MashupPlatform.wiring.EndpointValueError("You need to update a previous graph");
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.UpdatePrevious);
                 }
                 if (!graphInfo.data || graphInfo.data.length < Widget.DEFAULTS.MIN_LENGTH) {
-                    throw new MashupPlatform.wiring.EndpointValueError("When you are updating the field 'data' is mandatory");
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.UpdateDataRequired);
                 }
                 this.data = graphInfo.data;
                 this.lastData = graphInfo.data;
                 this.updateGraph();
-                MashupPlatform.widget.log("The graph was updated or created.", "INFO");
+                MashupPlatform.widget.log(Messages.UpdatedCreated, MashupPlatform.log.INFO);
                 return;
             case "slice":
                 if (!this.graph) {
-                    throw new MashupPlatform.wiring.EndpointValueError("You need to slice a previous graph");
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.SlicePrevious);
                 }
                 if (!graphInfo.data) {
-                    throw new MashupPlatform.wiring.EndpointValueError("When you are slicing the field 'data' is mandatory");
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.SliceDataRequired);
                 }
                 if (!this.lastData || this.lastData.length <= 1) {
-                    throw new MashupPlatform.wiring.EndpointValueError("When you are slicing previous data must exist");
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.SlicePreviousData);
                 }
                 var tmp = this.lastData;
                 tmp = tmp.slice(0, 1).concat(tmp.slice(2)).concat(graphInfo.data);
                 this.data = tmp;
                 this.lastData = tmp;
-                MashupPlatform.widget.log("The graph was updated or created.", "INFO");
+                MashupPlatform.widget.log(Messages.UpdatedCreated, MashupPlatform.log.INFO);
                 this.updateGraph();
                 return;
             }
@@ -180,16 +180,13 @@ window.Widget = (function () {
         // if the graph type is empty or is not supported...
         if (!graphInfo.type) {
             // ...throw a new error message.
-            throw new MashupPlatform.wiring.EndpointValueError("Google Chart Error. The field 'type' is required.");
-            // MashupPlatform.widget.log("Google Chart Error. The field 'type' is required.");
-            // return;
+            throw new MashupPlatform.wiring.EndpointValueError(Messages.TypeRequired);
         }
 
         // if the first time or the graph type will be changed (add)...
         if (!this.graph || this.type != graphInfo.type) {
             if (!graphInfo.options) {
-                throw new MashupPlatform.wiring.EndpointValueError("Google Chart Error. The field 'options' is required.");
-                // return;
+                throw new MashupPlatform.wiring.EndpointValueError(Messages.OptionRequired);
             }
 
             // ...create a new instance of Visualization Google Graph.
@@ -202,14 +199,14 @@ window.Widget = (function () {
         if (!graphInfo.data || graphInfo.data.length < Widget.DEFAULTS.MIN_LENGTH) {
             // ...clean the current graph.
             this.resetGraph();
-            MashupPlatform.widget.log("Google Chart Operation. The graph was emptied.", 'INFO');
+            MashupPlatform.widget.log(Messages.Emptied, MashupPlatform.log.INFO);
         } else {
             // otherwise, the graph will be painted with the current data.
             this.data = graphInfo.data;
             this.lastData = graphInfo.data;
             this.updateGraph();
             // this.repaintGraph();
-            MashupPlatform.widget.log("Google Chart Operation. The graph was updated or created.", 'INFO');
+            MashupPlatform.widget.log(Messages.UpdatedCreated, MashupPlatform.log.INFO);
         }
     };
 
@@ -229,6 +226,19 @@ window.Widget = (function () {
         this.createGraph().resetGraph();
     };
 
+    var Messages = {
+        UpdatedCreated: "The graph was updated or created.",
+        Emptied: "The graph was emptied",
+        OptionRequired: "The field 'options' is required.",
+        TypeRequired: "The field 'type' is required.",
+        EncodeError: "Data should be encoded as JSON",
+        UpdatePrevious: "You need to update a previous graph",
+        UpdateDataRequired: "When you are updating the field 'data' is mandatory",
+        SlicePrevious: "You need to slice a previous graph",
+        SliceDataRequired: "When you are slicing the field 'data' is mandatory",
+        SlicePreviousData: "When you are slicing previous data must exist"
+    };
+
     /* test-code */
 
     var getWrapperElement = function () {
@@ -236,7 +246,8 @@ window.Widget = (function () {
     };
 
     var prototypeappend = {
-        getWrapperElement: getWrapperElement
+        getWrapperElement: getWrapperElement,
+        Messages: Messages
     };
 
     for (var attrname in prototypeappend) {

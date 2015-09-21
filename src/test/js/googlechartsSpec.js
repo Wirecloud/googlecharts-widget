@@ -85,8 +85,8 @@
         };
 
         it("throws type error when the data are not JSON encoded", function() {
-            simulateEventWithObjectException('input', "NOJSON!", "EndpointTypeError", "Data should be encoded as JSON");
-            expect(MashupPlatform.wiring.EndpointTypeError).toHaveBeenCalledWith("Data should be encoded as JSON");
+            simulateEventWithObjectException('input', "NOJSON!", "EndpointTypeError", widget.Messages.EncodeError);
+            expect(MashupPlatform.wiring.EndpointTypeError).toHaveBeenCalledWith(widget.Messages.EncodeError);
         });
 
         it("throws error message when it's trying to perform any operation with no 'type'", function () {
@@ -96,8 +96,8 @@
                     height: "100%"
                 },
                 data: [["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]
-            }, 'EndpointValueError', "Google Chart Error. The field 'type' is required.");
-            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith("Google Chart Error. The field 'type' is required.");
+            }, 'EndpointValueError', widget.Messages.TypeRequired);
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(widget.Messages.TypeRequired);
         });
 
         it("throws error message when it's trying to perform any operation with a 'type' not supported", function () {
@@ -108,17 +108,17 @@
                     height:"100%"
                 },
                 data:[["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]
-            } , 'EndpointValueError', "Google Chart Error. The field 'type' is required.");
-            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith("Google Chart Error. The field 'type' is required.");
+            } , 'EndpointValueError', widget.Messages.TypeRequired);
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(widget.Messages.TypeRequired);
         });
 
         it("throws error message when it's trying to switch the graph with no 'options'", function () {
             simulateEventWithObjectException('input', {
                 type:"GeoChart",
                 data:[["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]
-            }, 'EndpointValueError', "Google Chart Error. The field 'options' is required.");
+            }, 'EndpointValueError', widget.Messages.OptionRequired);
 
-            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith("Google Chart Error. The field 'options' is required.");
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(widget.Messages.OptionRequired);
         });
 
         it("handles the data received from the 'input' endpoint to switch the graph", function () {
@@ -143,7 +143,7 @@
                 },
                 "data":[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]});
 
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was updated or created.", "INFO");
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.UpdatedCreated, MashupPlatform.log.INFO);
         });
 
         it("handles the data received (with no data) from the 'input' endpoint to switch and empty the graph", function () {
@@ -155,7 +155,7 @@
                 }
             });
 
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was emptied.", "INFO");
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.Emptied, MashupPlatform.log.INFO);
         });
 
         it("handles the data received (with unique data) from the 'input' endpoint to switch and empty the graph", function () {
@@ -168,7 +168,7 @@
                 data:[["Country","Popularity"]]
             });
 
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was emptied.", "INFO");
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.Emptied, MashupPlatform.log.INFO);
         });
 
         it("handles the data received (with unique data) from the 'input' ", function () {
@@ -177,7 +177,7 @@
                 data:[["Country","Popularity"]]
             });
 
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was emptied.", "INFO");
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.Emptied, MashupPlatform.log.INFO);
         });
 
 
@@ -186,7 +186,7 @@
                 type:"LineChart",
                 data:[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]});
 
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was updated or created.", "INFO");
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.UpdatedCreated, MashupPlatform.log.INFO);
         });
 
         it("handles the data received (with no data) from the 'input' endpoint to keep and empty the graph", function () {
@@ -194,7 +194,7 @@
                 type: "LineChart"
             });
 
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was emptied.", "INFO");
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.Emptied, MashupPlatform.log.INFO);
         });
 
         /*
@@ -210,13 +210,13 @@
         });
 
         it("handlers error in update action when there are no data", function () {
-            var errorm = "When you are updating the field 'data' is mandatory";
+            var errorm = widget.Messages.UpdateDataRequired;
             simulateEventWithObjectException('input', {action: "update"}, 'EndpointValueError', errorm);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
         });
 
         it("handles error in update with less data", function() {
-            var errorm = "When you are updating the field 'data' is mandatory";
+            var errorm = widget.Messages.UpdateDataRequired;
             simulateEventWithObjectException('input', {
                 action: "update",
                 data: [["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"]]}, 'EndpointValueError', errorm);
@@ -228,7 +228,7 @@
                 action: "update",
                 data: [["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6]]
             });
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("The graph was updated or created.", "INFO");
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.UpdatedCreated, MashupPlatform.log.INFO);
         });
 
         /*
@@ -236,27 +236,27 @@
          */
         it("handles error in slice action when there are no previous graph", function () {
 
-            var errorm = "You need to slice a previous graph";
+            var errorm = widget.Messages.SlicePrevious ;
             widget.graph = null;
             simulateEventWithObjectException('input', {action: "slice"}, 'EndpointValueError', errorm);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
         });
 
         it("handlers error in slice action when there are no data", function () {
-            var errorm = "When you are slicing the field 'data' is mandatory";
+            var errorm = widget.Messages.SliceDataRequired;
             simulateEventWithObjectException('input', {action: "slice"}, 'EndpointValueError', errorm);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
         });
 
         it("handlers error in slice action when there are no previous data", function () {
-            var errorm = "When you are slicing previous data must exist";
+            var errorm = widget.Messages.SlicePreviousData;
             widget.lastData = null;
             simulateEventWithObjectException('input', {action: "slice", data: []}, 'EndpointValueError', errorm);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
         });
 
         it("handlers error in slice action when the previous data are low", function () {
-            var errorm = "When you are slicing previous data must exist";
+            var errorm = widget.Messages.SlicePreviousData;
             widget.lastData = [[]];
             simulateEventWithObjectException('input', {action: "slice", data: []}, 'EndpointValueError', errorm);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
@@ -267,7 +267,7 @@
                 action: "slice",
                 data: [["0", "1"]]
             });
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("The graph was updated or created.", "INFO");
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.UpdatedCreated, MashupPlatform.log.INFO);
         });
 
 
@@ -277,7 +277,7 @@
                 data:[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"]]
             });
 
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith("Google Chart Operation. The graph was emptied.", "INFO");
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.Emptied, MashupPlatform.log.INFO);
         });
 
         it("repaints the graph container when the vertical is resized", function () {
