@@ -203,20 +203,20 @@
 
         it("handles error in update action when there are no previous graph", function () {
 
-            var errorm = "You need to update a previous graph";
+            var errorm = widget.Messages.GraphRequired;
             widget.graph = null;
             simulateEventWithObjectException('input', {action: "update"}, 'EndpointValueError', errorm);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
         });
 
         it("handlers error in update action when there are no data", function () {
-            var errorm = widget.Messages.UpdateDataRequired;
+            var errorm = widget.Messages.DataRequired;
             simulateEventWithObjectException('input', {action: "update"}, 'EndpointValueError', errorm);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
         });
 
         it("handles error in update with less data", function() {
-            var errorm = widget.Messages.UpdateDataRequired;
+            var errorm = widget.Messages.DataRequired;
             simulateEventWithObjectException('input', {
                 action: "update",
                 data: [["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"]]}, 'EndpointValueError', errorm);
@@ -236,27 +236,27 @@
          */
         it("handles error in slice action when there are no previous graph", function () {
 
-            var errorm = widget.Messages.SlicePrevious ;
+            var errorm = widget.Messages.GraphRequired ;
             widget.graph = null;
             simulateEventWithObjectException('input', {action: "slice"}, 'EndpointValueError', errorm);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
         });
 
         it("handlers error in slice action when there are no data", function () {
-            var errorm = widget.Messages.SliceDataRequired;
+            var errorm = widget.Messages.DataRequired;
             simulateEventWithObjectException('input', {action: "slice"}, 'EndpointValueError', errorm);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
         });
 
         it("handlers error in slice action when there are no previous data", function () {
-            var errorm = widget.Messages.SlicePreviousData;
+            var errorm = widget.Messages.PreviousDataRequired;
             widget.lastData = null;
             simulateEventWithObjectException('input', {action: "slice", data: []}, 'EndpointValueError', errorm);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
         });
 
         it("handlers error in slice action when the previous data are low", function () {
-            var errorm = widget.Messages.SlicePreviousData;
+            var errorm = widget.Messages.PreviousDataRequired;
             widget.lastData = [[]];
             simulateEventWithObjectException('input', {action: "slice", data: []}, 'EndpointValueError', errorm);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
@@ -271,19 +271,111 @@
         });
 
 
+        /*
+         APPEND && MAXDATA setting
+         */
+
+        it("handles error in append when there are no previous graph", function() {
+            var errorm = widget.Messages.GraphRequired ;
+            widget.graph = null;
+            simulateEventWithObjectException('input', {action: "append"}, 'EndpointValueError', errorm);
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
+        });
+
+        it("handlers error in append action when there are no data", function () {
+            var errorm = widget.Messages.DataRequired;
+            simulateEventWithObjectException('input', {action: "append"}, 'EndpointValueError', errorm);
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
+        });
+
+        it("handlers error in append action when the data length are different of 1", function () {
+            var errorm = widget.Messages.DataOneLength;
+            widget.lastData = null;
+            simulateEventWithObjectException('input', {action: "append", data: []}, 'EndpointValueError', errorm);
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
+
+            simulateEventWithObjectException('input', {action: "append", data: [["1"], ["2"]]}, 'EndpointValueError', errorm);
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
+        });
+
+
+        it("handlers error in append action when there are no previous data", function () {
+            var errorm = widget.Messages.PreviousDataRequired;
+            widget.lastData = null;
+            simulateEventWithObjectException('input', {action: "append", data: [[]]}, 'EndpointValueError', errorm);
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
+        });
+
+        it("handlers error in append action when the previous data are low", function () {
+            var errorm = widget.Messages.PreviousDataRequired;
+            widget.lastData = [[]];
+            simulateEventWithObjectException('input', {action: "append", data: [[]]}, 'EndpointValueError', errorm);
+            expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
+        });
+
+        it("handles a good append", function () {
+            MashupPlatform.simulateReceiveEvent('input', {
+                action: "append",
+                data: [["0", "1"]]
+            });
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.UpdatedCreated, MashupPlatform.log.INFO);
+        });
+
+        it("let not update maxdata if not present in settings", function () {
+            expect(widget.getMaxData()).toEqual(0);
+            MashupPlatform.simulateReceiveEvent('input', {
+                action: "setting"
+            });
+            expect(MashupPlatform.widget.log).not.toHaveBeenCalledWith(widget.Messages.SettingUpdated, MashupPlatform.log.INFO);
+            expect(widget.getMaxData()).toEqual(0);
+        });
+
+
+        it("let add maxdata setting", function () {
+            expect(widget.getMaxData()).toEqual(0);
+            MashupPlatform.simulateReceiveEvent('input', {
+                action: "setting",
+                maxdata: 5
+            });
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.SettingUpdated, MashupPlatform.log.INFO);
+            expect(widget.getMaxData()).toEqual(5);
+        });
+
+        it("let remove first data in append when maxdata", function () {
+            expect(widget.getMaxData()).toEqual(0);
+            MashupPlatform.simulateReceiveEvent('input', {
+                action: "setting",
+                maxdata: 2
+            });
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.SettingUpdated, MashupPlatform.log.INFO);
+            expect(widget.getMaxData()).toEqual(2);
+
+            MashupPlatform.simulateReceiveEvent('input', {
+                action: "append",
+                data: [["0", "1"]]
+            });
+            MashupPlatform.simulateReceiveEvent('input', {
+                action: "append",
+                data: [["0", "1"]]
+            });
+        });
+
+
+
+
         it("handles the data received (with unique data) from the 'input' endpoint to keep and empty the graph", function () {
             MashupPlatform.simulateReceiveEvent('input', {
                 type:"LineChart",
                 data:[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"]]
             });
 
-            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.Emptied, MashupPlatform.log.INFO);
+            expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.Emptied , MashupPlatform.log.INFO);
         });
 
         it("repaints the graph container when the vertical is resized", function () {
             MashupPlatform.simulateReceiveContext('heightInPixels', 80);
             expect(widget.repaintGraph).toHaveBeenCalled();
-            expect(widget.getWrapperElement().style.height).toEqual("64px");
+            expect(widget.getWrapperElement().style.height).toEqual("78px");
         });
 
         it("repaints the graph container when the horizontal is resized", function () {

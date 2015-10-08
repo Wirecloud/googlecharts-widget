@@ -30,6 +30,7 @@ window.Widget = (function () {
         this.graph = null;
         this.lastData = Widget.DEFAULTS.DATA;
         this.type = Widget.DEFAULTS.TYPE;
+        this.maxdata = 0;
 
         MashupPlatform.widget.context.registerCallback(handler_onresize.bind(this));
         MashupPlatform.wiring.registerCallback('input', handler_onreceiveGraphInfo.bind(this));
@@ -102,13 +103,36 @@ window.Widget = (function () {
         this.data = Widget.DEFAULTS.DATA;
         this.lastData = Widget.DEFAULTS.DATA;
         this.options = Widget.DEFAULTS.OPTIONS;
+        this.maxdata = 0;
 
         return this.repaintGraph();
     };
 
     Widget.prototype.repaintGraph = function repaintGraph() {
-        this.graph.draw(google.visualization.arrayToDataTable(this.data), this.options);
-
+        drawgraph.call(this, this.graph, this.data, this.options);
+        // this.graph.draw(google.visualization.arrayToDataTable(this.data), this.options);
+        // google.visualization.events.addListener(this.graph, 'select', function () {
+        //     var selection = this.graph.getSelection();
+        //     var message = '';
+        //     for (var i = 0; i < selection.length; i++) {
+        //         var item = selection[i];
+        //         var str = "";
+        //         if (item.row != null && item.column != null) {
+        //             str = this.data.getFormattedValue(item.row, item.column);
+        //             message += '{row:' + item.row + ',column:' + item.column + '} = ' + str + '\n';
+        //         } else if (item.row != null) {
+        //             str = this.data.getFormattedValue(item.row, 0);
+        //             message += '{row:' + item.row + ', column:none}; value (col 0) = ' + str + '\n';
+        //         } else if (item.column != null) {
+        //             str = this.data.getFormattedValue(0, item.column);
+        //             message += '{row:none, column:' + item.column + '}; value (row 0) = ' + str + '\n';
+        //         }
+        //     }
+        //     if (message === '') {
+        //         message = 'nothing';
+        //     }
+        //     window.alert('You selected ' + message);
+        // }.bind(this));
         return this;
     };
 
@@ -120,7 +144,8 @@ window.Widget = (function () {
         newops.animation.duration = 1000;
         newops.animation.easing = 'out';
 
-        this.graph.draw(google.visualization.arrayToDataTable(this.data), newops);
+        drawgraph.call(this, this.graph, this.data, newops);
+        // this.graph.draw(google.visualization.arrayToDataTable(this.data), newops);
     };
 
     /* ==================================================================================
@@ -133,7 +158,34 @@ window.Widget = (function () {
      {"action": "update","data": [["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",50, 50, 50, 50, 50, 50], ["2005/06",60, 60, 60, 60, 60, 60], ["2006/07",70, 70, 70, 70, 70, 70]]}
 
      {"action": "slice","data": [["2007/08",80, 80, 80, 80, 80, 80]]}
-    */
+     */
+
+    var drawgraph = function drawgraph(graph, rawdata, ops) {
+        var data = google.visualization.arrayToDataTable(rawdata);
+        graph.draw(data, ops);
+        google.visualization.events.addListener(graph, 'select', function () {
+            var selection = graph.getSelection();
+            var message = '';
+            for (var i = 0; i < selection.length; i++) {
+                var item = selection[i];
+                var str = "";
+                if (item.row != null && item.column != null) {
+                    str = data.getFormattedValue(item.row, item.column);
+                    message += '{row:' + item.row + ',column:' + item.column + '} = ' + str + '\n';
+                } else if (item.row != null) {
+                    str = data.getFormattedValue(item.row, 0);
+                    message += '{row:' + item.row + ', column:none}; value (col 0) = ' + str + '\n';
+                } else if (item.column != null) {
+                    str = data.getFormattedValue(0, item.column);
+                    message += '{row:none, column:' + item.column + '}; value (row 0) = ' + str + '\n';
+                }
+            }
+            if (message === '') {
+                message = 'nothing';
+            }
+            window.alert('You selected ' + message);
+        }.bind(this));
+    };
 
     var handler_onreceiveGraphInfo = function handler_onreceiveGraphInfo(graphInfoString) {
         var graphInfo;
@@ -144,13 +196,20 @@ window.Widget = (function () {
         }
 
         if (graphInfo.action && typeof graphInfo.action === "string") {
+            var tmp;
             switch (graphInfo.action) {
+            case "setting":
+                if ('maxdata' in graphInfo && typeof graphInfo.maxdata === "number") {
+                    MashupPlatform.widget.log(Messages.SettingUpdated, MashupPlatform.log.INFO);
+                    this.maxdata = graphInfo.maxdata;
+                }
+                return;
             case "update":
                 if (!this.graph) {
-                    throw new MashupPlatform.wiring.EndpointValueError(Messages.UpdatePrevious);
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.GraphRequired);
                 }
                 if (!graphInfo.data || graphInfo.data.length < Widget.DEFAULTS.MIN_LENGTH) {
-                    throw new MashupPlatform.wiring.EndpointValueError(Messages.UpdateDataRequired);
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.DataRequired);
                 }
                 this.data = graphInfo.data;
                 this.lastData = graphInfo.data;
@@ -159,16 +218,42 @@ window.Widget = (function () {
                 return;
             case "slice":
                 if (!this.graph) {
-                    throw new MashupPlatform.wiring.EndpointValueError(Messages.SlicePrevious);
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.GraphRequired);
                 }
                 if (!graphInfo.data) {
-                    throw new MashupPlatform.wiring.EndpointValueError(Messages.SliceDataRequired);
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.DataRequired);
                 }
                 if (!this.lastData || this.lastData.length <= 1) {
-                    throw new MashupPlatform.wiring.EndpointValueError(Messages.SlicePreviousData);
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.PreviousDataRequired);
                 }
-                var tmp = this.lastData;
+                tmp = this.lastData;
                 tmp = tmp.slice(0, 1).concat(tmp.slice(2)).concat(graphInfo.data);
+                this.data = tmp;
+                this.lastData = tmp;
+                MashupPlatform.widget.log(Messages.UpdatedCreated, MashupPlatform.log.INFO);
+                this.updateGraph();
+                return;
+            case "append":
+                if (!this.graph) {
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.GraphRequired);
+                }
+                if (!graphInfo.data) {
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.DataRequired);
+                }
+
+                if (graphInfo.data.length === 0 || graphInfo.data.length > 1) {
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.DataOneLength);
+                }
+
+                if (!this.lastData || this.lastData.length <= 1) {
+                    throw new MashupPlatform.wiring.EndpointValueError(Messages.PreviousDataRequired);
+                }
+
+                tmp = this.lastData;
+                if (this.maxdata > 0 && tmp.length >= this.maxdata + 1) {
+                    tmp = tmp.slice(0, 1).concat(tmp.slice(2));
+                }
+                tmp = tmp.concat(graphInfo.data);
                 this.data = tmp;
                 this.lastData = tmp;
                 MashupPlatform.widget.log(Messages.UpdatedCreated, MashupPlatform.log.INFO);
@@ -231,12 +316,12 @@ window.Widget = (function () {
         Emptied: "The graph was emptied",
         OptionRequired: "The field 'options' is required.",
         TypeRequired: "The field 'type' is required.",
+        GraphRequired: "A previous graph is required",
+        DataRequired: "The field 'data' is required",
+        PreviousDataRequired: "Previous data are required",
+        DataOneLength: "The field 'data' must be of length 1",
         EncodeError: "Data should be encoded as JSON",
-        UpdatePrevious: "You need to update a previous graph",
-        UpdateDataRequired: "When you are updating the field 'data' is mandatory",
-        SlicePrevious: "You need to slice a previous graph",
-        SliceDataRequired: "When you are slicing the field 'data' is mandatory",
-        SlicePreviousData: "When you are slicing previous data must exist"
+        SettingUpdated: "Setting updated"
     };
 
     /* test-code */
@@ -245,9 +330,14 @@ window.Widget = (function () {
         return this.wrapperElement;
     };
 
+    var getMaxData = function () {
+        return this.maxdata;
+    };
+
     var prototypeappend = {
         getWrapperElement: getWrapperElement,
-        Messages: Messages
+        Messages: Messages,
+        getMaxData: getMaxData
     };
 
     for (var attrname in prototypeappend) {

@@ -17,7 +17,10 @@ window.google = (function () {
             }),
             GeoChart: jasmine.createSpy('GeoChart').and.callFake(function (container) {
                 return {draw: jasmine.createSpy('draw')};
-            })
+            }),
+            events: {
+                addListener: jasmine.createSpy('addListener')
+            }
         }
 
     };
