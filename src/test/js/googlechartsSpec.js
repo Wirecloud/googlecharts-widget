@@ -38,6 +38,8 @@
 
         var widget = null;
 
+        var defaultdata = {"type":"ComboChart","options":{"title":"Monthly Coffee Production by Country","width":"100%","height":"100%","vAxis":{"title":"Cups"},"hAxis": {"title":"Month"},"seriesType":"bars","series":{"5":{"type":"line"}}},"data":[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]};
+
         beforeEach(function () {
             loadFixtures('index.html');
             MashupPlatform.reset();
@@ -360,9 +362,6 @@
             });
         });
 
-
-
-
         it("handles the data received (with unique data) from the 'input' endpoint to keep and empty the graph", function () {
             MashupPlatform.simulateReceiveEvent('input', {
                 type:"LineChart",
@@ -384,6 +383,72 @@
             expect(widget.getWrapperElement().style.width).toEqual("374px");
         });
 
+
+        /* SEND DATA WHEN SELECT */
+
+        it("should send when one data when selected", function (done) {
+            MashupPlatform.setStrategy({
+                'wiring.pushEvent': function(name, data) {
+                    expect(name).toEqual("data_selected");
+                    expect(data).toEqual(JSON.stringify([{"row_value":165,"row_label":"Bolivia","col_value":"2004/05","col_label":"Month"}]));
+                    done();
+                }
+            });
+            widget = new Widget();
+            MashupPlatform.simulateReceiveEvent('input', defaultdata);
+
+            widget.getGraph().setSelection([{row: 0, column: 1}]);
+            google.visualization.events.trigger(widget.getGraph(), 'select', {});
+        });
+
+        it("should send when all the row", function (done) {
+            MashupPlatform.setStrategy({
+                'wiring.pushEvent': function(name, data) {
+                    expect(name).toEqual("data_selected");
+                    expect(data).toEqual(JSON.stringify([{"row_value":165,"row_label":"Bolivia","col_value":"2004/05","col_label":"Month"},{"row_value":135,"row_label":"Bolivia","col_value":"2005/06","col_label":"Month"},{"row_value":157,"row_label":"Bolivia","col_value":"2006/07","col_label":"Month"},{"row_value":139,"row_label":"Bolivia","col_value":"2007/08","col_label":"Month"},{"row_value":136,"row_label":"Bolivia","col_value":"2008/09","col_label":"Month"}]));
+                    done();
+                }
+            });
+
+            widget = new Widget();
+            MashupPlatform.simulateReceiveEvent('input', defaultdata);
+
+            widget.getGraph().setSelection([{row: null, column: 1}]);
+            google.visualization.events.trigger(widget.getGraph(), 'select', {});
+        });
+
+        it("should send when all the column", function (done) {
+            MashupPlatform.setStrategy({
+                'wiring.pushEvent': function(name, data) {
+                    expect(name).toEqual("data_selected");
+                    expect(data).toEqual(JSON.stringify([{"row_value":"2005/06","row_label":"Month","col_value":"2005/06","col_label":"Month"},{"row_value":135,"row_label":"Bolivia","col_value":"2005/06","col_label":"Month"},{"row_value":1120,"row_label":"Ecuador","col_value":"2005/06","col_label":"Month"},{"row_value":599,"row_label":"Madagascar","col_value":"2005/06","col_label":"Month"},{"row_value":1268,"row_label":"Papua New Guinea","col_value":"2005/06","col_label":"Month"},{"row_value":288,"row_label":"Rwanda","col_value":"2005/06","col_label":"Month"},{"row_value":682,"row_label":"Average","col_value":"2005/06","col_label":"Month"}]));
+                    done();
+                }
+            });
+
+            widget = new Widget();
+            MashupPlatform.simulateReceiveEvent('input', defaultdata);
+
+            widget.getGraph().setSelection([{row: 1, column: null}]);
+            google.visualization.events.trigger(widget.getGraph(), 'select', {});
+        });
+
+        it("should not send when no column and no row", function (done) {
+            var listener = jasmine.createSpy('listener');
+            MashupPlatform.setStrategy({
+                'wiring.pushEvent': listener
+            });
+
+            widget = new Widget();
+            MashupPlatform.simulateReceiveEvent('input', defaultdata);
+
+            widget.getGraph().setSelection([{row: null, column: null}]);
+            google.visualization.events.trigger(widget.getGraph(), 'select', {});
+            setTimeout(function () {
+                expect(listener).not.toHaveBeenCalled();
+                done();
+            }, 500);
+        });
     });
 
 })();

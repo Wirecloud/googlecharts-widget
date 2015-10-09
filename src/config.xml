@@ -16,7 +16,8 @@
   </details>
 
   <wiring>
-    <inputendpoint name="input" type="text" label="Data in" description="Data Input. See the documentation for more information" friendcode="googlecharts-graph-data"/>
+    <inputendpoint name="input" type="text" label="Data in" description="Data Input. See the documentation for more information" friendcode="googlecharts-graph-data-in"/>
+    <outputendpoint name="data_selected" type="text" label="Data Selected" description="Data Selection. See the documentation for more information" friendcode="googlecharts-graph-data-out"/>
   </wiring>
 
   <contents src="index.html" useplatformstyle="true"/>

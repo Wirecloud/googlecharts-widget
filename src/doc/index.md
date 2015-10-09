@@ -23,7 +23,12 @@ This widget has not preferences.
 
 #### Output Endpoints:
 
-* This widget has no output endpoint.
+* **Selected data**: Output endpoint for sending selected data. The data is an array with the elemens selected. Every element have this data:
+
+    * `row_value (String)`: Value of the row selected.
+    * `row_label (String)`: Label of the row selected.
+    * `col_value (String)`: Value of the column selected.
+    * `col_label (String)`: Label of the column selected.
 
 ## Examples
 

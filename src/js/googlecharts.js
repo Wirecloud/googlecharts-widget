@@ -163,28 +163,44 @@ window.Widget = (function () {
     var drawgraph = function drawgraph(graph, rawdata, ops) {
         var data = google.visualization.arrayToDataTable(rawdata);
         graph.draw(data, ops);
-        google.visualization.events.addListener(graph, 'select', function () {
+        google.visualization.events.addListener(graph, 'select', handle_select.call(this, graph, data, ops).bind(this));
+    };
+
+    var handle_select = function handle_select(graph, data, ops) {
+        return function () {
+            var extract_info = function (row, col) {
+                return {
+                    row_value: data.getValue(row, col),
+                    row_label: data.getColumnLabel(col),
+                    col_value: data.getValue(row, 0),
+                    col_label: data.getColumnLabel(0)
+                };
+            };
             var selection = graph.getSelection();
-            var message = '';
+            var messagedata = [];
             for (var i = 0; i < selection.length; i++) {
                 var item = selection[i];
-                var str = "";
+                var info = {};
                 if (item.row != null && item.column != null) {
-                    str = data.getFormattedValue(item.row, item.column);
-                    message += '{row:' + item.row + ',column:' + item.column + '} = ' + str + '\n';
+                    info = extract_info(item.row, item.column);
+                    messagedata.push(info);
                 } else if (item.row != null) {
-                    str = data.getFormattedValue(item.row, 0);
-                    message += '{row:' + item.row + ', column:none}; value (col 0) = ' + str + '\n';
+                    for (var jr = 0; jr < data.getNumberOfColumns(); jr++) {
+                        info = extract_info(item.row, jr);
+                        messagedata.push(info);
+                    }
                 } else if (item.column != null) {
-                    str = data.getFormattedValue(0, item.column);
-                    message += '{row:none, column:' + item.column + '}; value (row 0) = ' + str + '\n';
+                    for (var jc = 0; jc < data.getNumberOfRows(); jc++) {
+                        info = extract_info(jc, item.column);
+                        messagedata.push(info);
+                    }
                 }
             }
-            if (message === '') {
-                message = 'nothing';
+            // window.console.log(JSON.stringify(messagedata));
+            if (messagedata.length > 0) {
+                MashupPlatform.wiring.pushEvent("data_selected", JSON.stringify(messagedata));
             }
-            window.alert('You selected ' + message);
-        }.bind(this));
+        };
     };
 
     var handler_onreceiveGraphInfo = function handler_onreceiveGraphInfo(graphInfoString) {
@@ -334,10 +350,15 @@ window.Widget = (function () {
         return this.maxdata;
     };
 
+    var getGraph = function () {
+        return this.graph;
+    };
+
     var prototypeappend = {
         getWrapperElement: getWrapperElement,
         Messages: Messages,
-        getMaxData: getMaxData
+        getMaxData: getMaxData,
+        getGraph: getGraph
     };
 
     for (var attrname in prototypeappend) {
