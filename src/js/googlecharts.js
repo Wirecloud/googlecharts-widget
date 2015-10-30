@@ -110,29 +110,6 @@ window.Widget = (function () {
 
     Widget.prototype.repaintGraph = function repaintGraph() {
         drawgraph.call(this, this.graph, this.data, this.options);
-        // this.graph.draw(google.visualization.arrayToDataTable(this.data), this.options);
-        // google.visualization.events.addListener(this.graph, 'select', function () {
-        //     var selection = this.graph.getSelection();
-        //     var message = '';
-        //     for (var i = 0; i < selection.length; i++) {
-        //         var item = selection[i];
-        //         var str = "";
-        //         if (item.row != null && item.column != null) {
-        //             str = this.data.getFormattedValue(item.row, item.column);
-        //             message += '{row:' + item.row + ',column:' + item.column + '} = ' + str + '\n';
-        //         } else if (item.row != null) {
-        //             str = this.data.getFormattedValue(item.row, 0);
-        //             message += '{row:' + item.row + ', column:none}; value (col 0) = ' + str + '\n';
-        //         } else if (item.column != null) {
-        //             str = this.data.getFormattedValue(0, item.column);
-        //             message += '{row:none, column:' + item.column + '}; value (row 0) = ' + str + '\n';
-        //         }
-        //     }
-        //     if (message === '') {
-        //         message = 'nothing';
-        //     }
-        //     window.alert('You selected ' + message);
-        // }.bind(this));
         return this;
     };
 
@@ -145,7 +122,6 @@ window.Widget = (function () {
         newops.animation.easing = 'out';
 
         drawgraph.call(this, this.graph, this.data, newops);
-        // this.graph.draw(google.visualization.arrayToDataTable(this.data), newops);
     };
 
     /* ==================================================================================

@@ -1,7 +1,7 @@
 {
     "vendor": "CoNWeT",
     "name": "googlecharts",
-    "version": "1.0.7",
+    "version": "1.0.2",
     "description": "Wirecloud widget allowing you to create any graph supported by Google Charts",
     "repository": {
         "type": "git",
