@@ -1,6 +1,6 @@
 ## v1.0.2
 
-- Add output endpoint to send data selected in the grapd
+- Add output endpoint to send data selected in the graph
 - First rendering using pixels and percentage instead of cells
 - Add animations when the data received are of the same type of the previous graph
 - Add actions to update, append or slice data without sending the full configuration
