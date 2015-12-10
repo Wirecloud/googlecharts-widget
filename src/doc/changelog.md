@@ -1,3 +1,7 @@
+## v1.0.3
+
+- Intial support for zooming in and out in linear and column charts
+
 ## v1.0.2
 
 - Add output endpoint to send data selected in the graph
