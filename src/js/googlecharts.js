@@ -136,8 +136,19 @@ window.Widget = (function () {
      {"action": "slice","data": [["2007/08",80, 80, 80, 80, 80, 80]]}
      */
 
+    var injectOptions = function injectOptions(ops) {
+        if (this.type === "LineChart" || this.type === "ColumnChart") {
+            ops.explorer = ops.explorer || {
+                maxZoomOut: 2,
+                keepInBounds: true
+            };
+        }
+        return ops;
+    };
+
     var drawgraph = function drawgraph(graph, rawdata, ops) {
         var data = google.visualization.arrayToDataTable(rawdata);
+        ops = injectOptions.call(this, ops);
         graph.draw(data, ops);
         google.visualization.events.addListener(graph, 'select', handle_select.call(this, graph, data, ops).bind(this));
     };
