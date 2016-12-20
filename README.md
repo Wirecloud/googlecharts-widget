@@ -35,3 +35,16 @@ grunt
 ```
 
 If everything goes well, you will find a wgt file in the **build** folder.
+
+## Documentation
+
+Documentation about how to use this widget is available on the
+[User Guide](src/doc/userguide.md). Anyway, you can find general information
+about how to use widgets on the
+[WireCloud's User Guide](https://wirecloud.readthedocs.io/en/stable/user_guide/)
+available on Read the Docs.
+
+## Copyright and License
+
+Copyright (c) 2016 Vendor
+Licensed under the MIT license.
