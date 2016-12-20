@@ -23,14 +23,14 @@ window.google = (function () {
         })
     };
 
-    var buildsuperdata = function(data) {
-        if (data.length === 0 ) {
+    var buildsuperdata = function (data) {
+        if (data.length === 0) {
             throw "No data";
         }
         return {
             header: data[0],
             data: data.slice(1),
-            getNumberOfRows: function() {
+            getNumberOfRows: function () {
                 return this.data.length;
             },
             getNumberOfColumns: jasmine.createSpy('getNumberOfColumns').and.callFake(function () {
@@ -39,13 +39,13 @@ window.google = (function () {
                 }
                 return this.data[0].length;
             }),
-            getValue: function(x, y) {
+            getValue: function (x, y) {
                 // if (x + 1 >= this.data.length) {
                 //     throw "Out of range";
                 // }
                 return this.data[x][y];
             },
-            getColumnLabel: function(y) {
+            getColumnLabel: function (y) {
                 return this.header[y];
             }
         };

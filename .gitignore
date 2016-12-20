@@ -1,5 +1,8 @@
 bower_components/
-src/lib/
 node_modules/
-build/
+src/bower_components/
 dist/
+build/
+_SpecRunner.html
+src/js/.tern-port
+.DS_Store

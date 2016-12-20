@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/*global $, google, MockMP, MashupPlatform*/
+/* global $, google, MockMP, MashupPlatform, loadFixtures, Widget*/
 
 (function () {
 
@@ -38,7 +38,7 @@
 
         var widget = null;
 
-        var defaultdata = {"type":"ComboChart","options":{"title":"Monthly Coffee Production by Country","width":"100%","height":"100%","vAxis":{"title":"Cups"},"hAxis": {"title":"Month"},"seriesType":"bars","series":{"5":{"type":"line"}}},"data":[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]};
+        var defaultdata = {"type": "ComboChart","options": {"title": "Monthly Coffee Production by Country","width": "100%","height": "100%","vAxis": {"title": "Cups"},"hAxis": {"title": "Month"},"seriesType": "bars","series": {"5": {"type": "line"}}},"data": [["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]};
 
         beforeEach(function () {
             loadFixtures('index.html');
@@ -86,7 +86,7 @@
             }
         };
 
-        it("throws type error when the data are not JSON encoded", function() {
+        it("throws type error when the data are not JSON encoded", function () {
             simulateEventWithObjectException('input', "NOJSON!", "EndpointTypeError", widget.Messages.EncodeError);
             expect(MashupPlatform.wiring.EndpointTypeError).toHaveBeenCalledWith(widget.Messages.EncodeError);
         });
@@ -104,20 +104,20 @@
 
         it("throws error message when it's trying to perform any operation with a 'type' not supported", function () {
             simulateEventWithObjectException('input',{
-                type:"",
-                options:{
-                    width:"100%",
-                    height:"100%"
+                type: "",
+                options: {
+                    width: "100%",
+                    height: "100%"
                 },
-                data:[["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]
+                data: [["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]
             } , 'EndpointValueError', widget.Messages.TypeRequired);
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(widget.Messages.TypeRequired);
         });
 
         it("throws error message when it's trying to switch the graph with no 'options'", function () {
             simulateEventWithObjectException('input', {
-                type:"GeoChart",
-                data:[["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]
+                type: "GeoChart",
+                data: [["Country","Popularity"],["Germany",200],["United States",300],["Brazil",400],["Canada",500],["France",600],["RU",700]]
             }, 'EndpointValueError', widget.Messages.OptionRequired);
 
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(widget.Messages.OptionRequired);
@@ -125,35 +125,35 @@
 
         it("handles the data received from the 'input' endpoint to switch the graph", function () {
             MashupPlatform.simulateReceiveEvent('input', {
-                "type":"ComboChart",
-                "options":{
-                    "title":"Monthly Coffee Production by Country",
-                    "width":"100%",
-                    "height":"100%",
-                    "vAxis":{
-                        "title":"Cups"
+                "type": "ComboChart",
+                "options": {
+                    "title": "Monthly Coffee Production by Country",
+                    "width": "100%",
+                    "height": "100%",
+                    "vAxis": {
+                        "title": "Cups"
                     },
                     "hAxis": {
-                        "title":"Month"
+                        "title": "Month"
                     },
-                    "seriesType":"bars",
-                    "series":{
-                        "5":{
-                            "type":"line"
+                    "seriesType": "bars",
+                    "series": {
+                        "5": {
+                            "type": "line"
                         }
                     }
                 },
-                "data":[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]});
+                "data": [["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]});
 
             expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.UpdatedCreated, MashupPlatform.log.INFO);
         });
 
         it("handles the data received (with no data) from the 'input' endpoint to switch and empty the graph", function () {
             MashupPlatform.simulateReceiveEvent('input', {
-                type:"GeoChart",
-                options:{
-                    width:"100%",
-                    height:"100%"
+                type: "GeoChart",
+                options: {
+                    width: "100%",
+                    height: "100%"
                 }
             });
 
@@ -162,12 +162,12 @@
 
         it("handles the data received (with unique data) from the 'input' endpoint to switch and empty the graph", function () {
             MashupPlatform.simulateReceiveEvent('input', {
-                type:"GeoChart",
+                type: "GeoChart",
                 options: {
                     width: "100%",
                     height: "100%"
                 },
-                data:[["Country","Popularity"]]
+                data: [["Country","Popularity"]]
             });
 
             expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.Emptied, MashupPlatform.log.INFO);
@@ -175,8 +175,8 @@
 
         it("handles the data received (with unique data) from the 'input' ", function () {
             MashupPlatform.simulateReceiveEvent('input', {
-                type:"LineChart",
-                data:[["Country","Popularity"]]
+                type: "LineChart",
+                data: [["Country","Popularity"]]
             });
 
             expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.Emptied, MashupPlatform.log.INFO);
@@ -185,8 +185,8 @@
 
         it("handles the data received from the 'input' endpoint to update the graph", function () {
             MashupPlatform.simulateReceiveEvent('input', {
-                type:"LineChart",
-                data:[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]});
+                type: "LineChart",
+                data: [["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6],["2005/06",135,1120,599,1268,288,682],["2006/07",157,1167,587,807,397,623],["2007/08",139,1110,615,968,215,609.4],["2008/09",136,691,629,1026,366,569.6]]});
 
             expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.UpdatedCreated, MashupPlatform.log.INFO);
         });
@@ -217,7 +217,7 @@
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
         });
 
-        it("handles error in update with less data", function() {
+        it("handles error in update with less data", function () {
             var errorm = widget.Messages.DataRequired;
             simulateEventWithObjectException('input', {
                 action: "update",
@@ -225,7 +225,7 @@
             expect(MashupPlatform.wiring.EndpointValueError).toHaveBeenCalledWith(errorm);
         });
 
-        it("handles a good update", function() {
+        it("handles a good update", function () {
             MashupPlatform.simulateReceiveEvent('input', {
                 action: "update",
                 data: [["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"],["2004/05",165,938,522,998,450,614.6]]
@@ -277,7 +277,7 @@
          APPEND && MAXDATA setting
          */
 
-        it("handles error in append when there are no previous graph", function() {
+        it("handles error in append when there are no previous graph", function () {
             var errorm = widget.Messages.GraphRequired ;
             widget.graph = null;
             simulateEventWithObjectException('input', {action: "append"}, 'EndpointValueError', errorm);
@@ -364,8 +364,8 @@
 
         it("handles the data received (with unique data) from the 'input' endpoint to keep and empty the graph", function () {
             MashupPlatform.simulateReceiveEvent('input', {
-                type:"LineChart",
-                data:[["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"]]
+                type: "LineChart",
+                data: [["Month","Bolivia","Ecuador","Madagascar","Papua New Guinea","Rwanda","Average"]]
             });
 
             expect(MashupPlatform.widget.log).toHaveBeenCalledWith(widget.Messages.Emptied , MashupPlatform.log.INFO);
@@ -388,9 +388,9 @@
 
         it("should send when one data when selected", function (done) {
             MashupPlatform.setStrategy({
-                'wiring.pushEvent': function(name, data) {
+                'wiring.pushEvent': function (name, data) {
                     expect(name).toEqual("data_selected");
-                    expect(data).toEqual(JSON.stringify([{"row_value":165,"row_label":"Bolivia","col_value":"2004/05","col_label":"Month"}]));
+                    expect(data).toEqual(JSON.stringify([{"row_value": 165,"row_label": "Bolivia","col_value": "2004/05","col_label": "Month"}]));
                     done();
                 }
             });
@@ -403,9 +403,9 @@
 
         it("should send when all the row", function (done) {
             MashupPlatform.setStrategy({
-                'wiring.pushEvent': function(name, data) {
+                'wiring.pushEvent': function (name, data) {
                     expect(name).toEqual("data_selected");
-                    expect(data).toEqual(JSON.stringify([{"row_value":165,"row_label":"Bolivia","col_value":"2004/05","col_label":"Month"},{"row_value":135,"row_label":"Bolivia","col_value":"2005/06","col_label":"Month"},{"row_value":157,"row_label":"Bolivia","col_value":"2006/07","col_label":"Month"},{"row_value":139,"row_label":"Bolivia","col_value":"2007/08","col_label":"Month"},{"row_value":136,"row_label":"Bolivia","col_value":"2008/09","col_label":"Month"}]));
+                    expect(data).toEqual(JSON.stringify([{"row_value": 165,"row_label": "Bolivia","col_value": "2004/05","col_label": "Month"},{"row_value": 135,"row_label": "Bolivia","col_value": "2005/06","col_label": "Month"},{"row_value": 157,"row_label": "Bolivia","col_value": "2006/07","col_label": "Month"},{"row_value": 139,"row_label": "Bolivia","col_value": "2007/08","col_label": "Month"},{"row_value": 136,"row_label": "Bolivia","col_value": "2008/09","col_label": "Month"}]));
                     done();
                 }
             });
@@ -419,9 +419,9 @@
 
         it("should send when all the column", function (done) {
             MashupPlatform.setStrategy({
-                'wiring.pushEvent': function(name, data) {
+                'wiring.pushEvent': function (name, data) {
                     expect(name).toEqual("data_selected");
-                    expect(data).toEqual(JSON.stringify([{"row_value":"2005/06","row_label":"Month","col_value":"2005/06","col_label":"Month"},{"row_value":135,"row_label":"Bolivia","col_value":"2005/06","col_label":"Month"},{"row_value":1120,"row_label":"Ecuador","col_value":"2005/06","col_label":"Month"},{"row_value":599,"row_label":"Madagascar","col_value":"2005/06","col_label":"Month"},{"row_value":1268,"row_label":"Papua New Guinea","col_value":"2005/06","col_label":"Month"},{"row_value":288,"row_label":"Rwanda","col_value":"2005/06","col_label":"Month"},{"row_value":682,"row_label":"Average","col_value":"2005/06","col_label":"Month"}]));
+                    expect(data).toEqual(JSON.stringify([{"row_value": "2005/06","row_label": "Month","col_value": "2005/06","col_label": "Month"},{"row_value": 135,"row_label": "Bolivia","col_value": "2005/06","col_label": "Month"},{"row_value": 1120,"row_label": "Ecuador","col_value": "2005/06","col_label": "Month"},{"row_value": 599,"row_label": "Madagascar","col_value": "2005/06","col_label": "Month"},{"row_value": 1268,"row_label": "Papua New Guinea","col_value": "2005/06","col_label": "Month"},{"row_value": 288,"row_label": "Rwanda","col_value": "2005/06","col_label": "Month"},{"row_value": 682,"row_label": "Average","col_value": "2005/06","col_label": "Month"}]));
                     done();
                 }
             });

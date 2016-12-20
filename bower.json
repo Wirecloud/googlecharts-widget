@@ -1,8 +1,6 @@
 {
-  "name": "googlecharts",
+  "name": "widgetPlantilla",
   "dependencies": {},
-  "exportsOverride": {},
-  "devDependencies": {
-    "jasmine-jquery": "2.0.6"
-  }
+  "devDependencies": {},
+  "exportsOverride": {}
 }

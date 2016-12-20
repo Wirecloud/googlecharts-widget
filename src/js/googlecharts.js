@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-/*global google, MashupPlatform*/
+/* globals google, MashupPlatform*/
 
 
 window.Widget = (function () {
@@ -72,7 +72,7 @@ window.Widget = (function () {
     Widget.prototype.init = function init() {
         var packages;
 
-        //For more info, show all packages supported: https://developers.google.com/chart/
+        // For more info, show all packages supported: https://developers.google.com/chart/
         packages = [
             "corechart",
             "gauge",
@@ -84,7 +84,7 @@ window.Widget = (function () {
             "treemap"
         ];
 
-        //For more info, show the Google Loader Developer's Guide: https://developers.google.com/loader/
+        // For more info, show the Google Loader Developer's Guide: https://developers.google.com/loader/
         google.load('visualization', '1', {packages: packages});
         google.setOnLoadCallback(handler_onload.bind(this));
     };
